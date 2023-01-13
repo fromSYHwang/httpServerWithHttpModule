@@ -95,6 +95,33 @@ const httpRequestListner = function(request, response) {
 
     }  
   }
+  
+  if (method === "GET") {
+    if ( url === '/post/postlist') {
+ 
+       const data = [];
+ 
+       posts.forEach( (post) =>  {
+         users.some( (user) => {
+           if (post.userId === user.id) {
+             const postlist = { 
+               "userId" : user.id,
+               "userName" : user.name,
+               "postingId" : post.id,
+               "postingTilte" : post.title,
+               "postingImageUrl" : post.imageUrl,
+               "postingContent" : post.content,
+             }
+             data.push(postlist);
+             return true;
+           }
+         })
+       });
+       response.writeHead(200, { "Content-Type" : "application/json" });
+       response.end(JSON.stringify( { "data" : data }	))
+     }
+   
+ }
 }
 
 server.on('request', httpRequestListner);
