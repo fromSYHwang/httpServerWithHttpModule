@@ -96,7 +96,7 @@ const httpRequestListner = function(request, response) {
     }  
   }
   
-  if (method === "GET") {
+  else if (method === "GET") {
     if ( url === '/post/postlist') {
  
        const data = [];
@@ -121,7 +121,48 @@ const httpRequestListner = function(request, response) {
        response.end(JSON.stringify( { "data" : data }	))
      }
    
- }
+ } 
+
+  //게시글 정보 수정 엔드포인트 구현
+  else if (method === 'PATCH') {
+    if (url === '/post/edit') {
+
+      let body = '';
+
+      request.on('data', (data) => {
+        body += data; 
+      });
+
+      request.on('end', () => {
+        const post = JSON.parse(body);
+        post.id = parseInt(post.id);
+
+        posts.some( (el) => {
+            if( post.id === el.id ) {
+              Object.keys(post).forEach ( (key) => {
+                if ( key === ('' || undefined || null || NaN )) {
+                  // 수정할 key 값이 없다면 해당 키는 값을 수정하지 않는다
+                } else { 
+                  // key가 userId 이면 userId 값을 int화 한다
+                  if( key === 'userId' ) { 
+                     post[key] = parseInt(post[key])
+                    }
+
+                  // 수정할 key 값이 존재하면 해당 요소를 새로운 값으로 수정한다
+                    el[key] = post[key];
+                    console.log(post)
+                }
+              })
+              return true;
+            }
+
+          response.writeHead(200, { "Content-Type" : "application/json" });
+          response.end(JSON.stringify( { "data" : post }	))
+        });
+
+      });
+    }
+  }
 }
 
 server.on('request', httpRequestListner);
@@ -129,3 +170,4 @@ server.on('request', httpRequestListner);
 server.listen(8000, '127.0.0.1', function() {
   console.log('서버 연결');
 });
+
