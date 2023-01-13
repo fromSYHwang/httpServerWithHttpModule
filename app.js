@@ -59,7 +59,7 @@ const httpRequestListner = function(request, response) {
         const user = JSON.parse(body);
 
         users.push({
-          "id": user.id,
+          "id": parseInt(user.id),
           "name": user.name, 
           "email": user.email,
           "password": user.password
