@@ -120,7 +120,37 @@ const httpRequestListner = function(request, response) {
        response.writeHead(200, { "Content-Type" : "application/json" });
        response.end(JSON.stringify( { "data" : data }	))
      }
+
+
+  // 유저와 게시글 조회 엔드포인트 구현
+  else if (url.startsWith("/user/user_posting")) {
+    const userId = parseInt(url.split("/")[3]);
+    const user = users.find((user) => user.id === userId);
+    const userInfo = {
+      userID : user.id,
+      userName: user.name,
+    }
+
+    const userPosts = posts.filter ( post => post.userId ===userId );
+    // console.log(userId)
+    // console.log(userPosts)
+    const postInfo = [];
+    userPosts.forEach( post => {
+      const userInfo ={
+        postingId: post.id,
+        postingName: post.title,
+        postingContent: post.content,
+      }
+      postInfo.push(userInfo)
+    })
+
+    // console.log(postInfo)
+    userInfo.postings = postInfo;
+
+    response.writeHead(200, { "Content-Type": "application/json" });
+    response.end(JSON.stringify({ data: userInfo }));
    
+  }   
  } 
 
   //게시글 정보 수정 엔드포인트 구현
