@@ -163,6 +163,35 @@ const httpRequestListner = function(request, response) {
       });
     }
   }
+
+  //게시글 삭제 엔드포인트 구현
+  else if (method === 'DELETE') {
+    if (url === '/post/delete') {
+      let body = '';
+
+      request.on('data', (data) => {
+        body += data; 
+      });
+
+      request.on('end', () => {
+        const deletePost = JSON.parse(body);
+        deletePost.id = parseInt(deletePost.id);
+
+        //게시글 id를 받아서 해당 게시글을 삭제한다
+        posts.some((post, index) => {
+          if(post.id === deletePost.id) {
+            posts.splice(index, 1);
+            return true;
+          }
+        })
+
+        response.writeHead(200, { "Content-Type" : "application/json" });
+        response.end(JSON.stringify( { "message" : "postingDeleted" }	));
+
+      })
+
+    }
+  }
 }
 
 server.on('request', httpRequestListner);
