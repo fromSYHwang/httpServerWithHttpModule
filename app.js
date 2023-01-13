@@ -70,6 +70,30 @@ const httpRequestListner = function(request, response) {
       })
     } 
     
+      //게시물 생성 엔드포인트 구현
+    else if (url === '/post/postwrite') {   
+
+      let body = '';
+
+      request.on('data', (data) => {
+        body += data; 
+      });
+
+      request.on('end', () => {
+        const post = JSON.parse(body);
+
+        posts.push({
+          "id": parseInt(post.id),
+          "title": post.title, 
+          "content": post.content,
+          "userId": parseInt(post.userId),
+          "imageUrl": post.imageUrl,
+        });
+        response.writeHead(201, { "Content-Type" : "application/json" });
+        response.end(JSON.stringify( { "message" : "postCreated" }	))
+      })
+
+    }  
   }
 }
 
